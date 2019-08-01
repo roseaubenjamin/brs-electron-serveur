@@ -175,6 +175,13 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        //les providers de l'applications 
+        App\Libs\Provider\Application::class , 
+        App\Libs\Provider\Trello::class , 
+        App\Libs\Provider\Infusionsoft::class , 
+        App\Libs\Provider\Mobile::class , 
+        App\Libs\Provider\Team::class , 
+
     ],
 
     /*
@@ -225,6 +232,12 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        //facade utiliser par notre class 
+        'Infusionsoft' => App\Libs\Facades\Infusionsoft::class,
+        'Mobile' => App\Libs\Facades\Mobile::class,
+        'Team' => App\Libs\Facades\Team::class,
+        'Trello' => App\Libs\Facades\Trello::class,
+        'Application' => App\Libs\Facades\Application::class,
 
     ],
 
