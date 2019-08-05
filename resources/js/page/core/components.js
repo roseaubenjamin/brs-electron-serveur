@@ -24,6 +24,34 @@ Vue.component('app-admin', admin);
 import modal from '../components/modal';
 Vue.component('modal', modal);
 
+import adminMenu from '../components/admin-menu';
+Vue.component('admin-menu', adminMenu);
+
+import OperateurMenu from '../components/operateur-menu';
+Vue.component('operateur-menu', OperateurMenu);
+
+import adminCreateApplication from '../components/admin-create-application';
+Vue.component('create-application', adminCreateApplication);
+
+import adminCreateMobile from '../components/admin-create-mobile';
+Vue.component('create-mobile', adminCreateMobile);
+
+import adminMobileOptionTrello from '../components/admin-mobile-option-trello';
+Vue.component('mobile-option-trello', adminMobileOptionTrello);
+
+import adminMobileOptionIfs from '../components/admin-mobile-option-ifs';
+Vue.component('mobile-option-ifs', adminMobileOptionIfs);
+
+import mobileIndexContactifs from '../components/mobile-index-contactifs';
+Vue.component('contactifs', mobileIndexContactifs);
+
+import mobileForm from '../components/mobile-index-form';
+Vue.component('mobile-form', mobileForm);
+
+import noteVocal from '../components/noteVocal';
+Vue.component('note-vocal', noteVocal);
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 import { 
 	Menu , 
@@ -48,6 +76,11 @@ import {
 	Tooltip , 
 	Spin , 
 	List , 
+	Alert , 
+	Tabs ,
+	Select , 
+	DatePicker ,
+	InputNumber , 
 } from 'ant-design-vue';
 
 Vue.component( Menu.name, Menu );
@@ -67,6 +100,7 @@ Vue.component( Col.name, Col );
 Vue.component( Breadcrumb.name, Breadcrumb );
 
 Vue.component( Button.name, Button );
+Vue.component( Button.Group.name, Button.Group );
 
 Vue.component( Table.name, Table );
 
@@ -104,6 +138,18 @@ Vue.component( Spin.name, Spin );
 Vue.component( List.name, List );
 Vue.component( List.Item.name, List.Item );
 Vue.component( List.Item.Meta.name, List.Item.Meta );
+
+Vue.component( Alert.name, Alert );
+
+Vue.component( Tabs.name, Tabs );
+Vue.component( Tabs.TabPane.name, Tabs.TabPane );
+
+Vue.component( Select.name, Select );
+Vue.component( Select.Option.name, Select.Option );
+
+Vue.component( DatePicker.name, DatePicker );
+
+Vue.component( InputNumber.name, InputNumber );
 
 let comp = {}
 

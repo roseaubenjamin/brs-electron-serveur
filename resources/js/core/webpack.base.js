@@ -13,7 +13,7 @@ module.exports = {
      fs: "empty"
   },
   output: {
-    path: path.join(__dirname, '../../../../', 'public'),
+    path: path.join(__dirname, '../../../', 'public'),
     publicPath: '/',
     filename: 'js/[name].js',
     chunkFilename: 'js/[id].[name].js?[hash]',

@@ -10,8 +10,10 @@
     </a-layout> 
 </template>
 <script>
-    
+    import router from '../router/mobile';
+
     export default {
+        router , 
         data(){ 
             return {
                 page : window.location.pathname ,

@@ -1,5 +1,6 @@
 <?php
 
+
 return [
 
     /*
@@ -181,7 +182,8 @@ return [
         App\Libs\Provider\Infusionsoft::class , 
         App\Libs\Provider\Mobile::class , 
         App\Libs\Provider\Team::class , 
-
+        App\Libs\Provider\Option::class , 
+        
     ],
 
     /*
@@ -238,6 +240,7 @@ return [
         'Team' => App\Libs\Facades\Team::class,
         'Trello' => App\Libs\Facades\Trello::class,
         'Application' => App\Libs\Facades\Application::class,
+        'Option' => App\Libs\Provider\Option::class,
 
     ],
 

@@ -10,11 +10,17 @@ class CreateOptionsTable extends Migration
     public function up()
     {
         Schema::create('options', function (Blueprint $table) {
+            
             $table->bigIncrements('id');
             $table->string('name') ;
+            $table->string('groupe')->nullable() ;
             $table->text('value') ;
-            $table->boolean('autoload') ;
+            //attachement de cette option a un application ou a un compte mobile crée
+            $table->string('options_type')->nullable();
+            $table->integer('options_id')->nullable()->unsigned();
+
             $table->timestamps();
+        
         });
     }
 

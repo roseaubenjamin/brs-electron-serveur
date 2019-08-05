@@ -1,6 +1,6 @@
 <template>
     <a-layout>    
-        <app-operateur-menu></app-operateur-menu>
+        <operateur-menu></operateur-menu>
         <a-layout-content :style="{ background: '#fff', padding: '0px', margin: 0, minHeight: '280px' }">
             <transition name="fade">
                 <router-view></router-view> 
@@ -24,7 +24,7 @@
         },
         methods : {
             async init (){
-                user.addUser( this.user );
+                //user.addUser( this.user );
             }
         },
         mounted(){

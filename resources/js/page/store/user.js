@@ -6,7 +6,7 @@ class bot extends store{
 
 	constructor(){
 		super();
-		this.stade = {
+		this.state = {
 			auth : {}
 		}
 	}
