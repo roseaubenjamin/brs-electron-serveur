@@ -16,7 +16,8 @@ class ViewController extends Controller
 
     public function home()
     {
-		return View('home');
+		$token = session('token') ;
+		return View('home', $token?['tokenauth' => array( 'setApiKey' => $token )]:[]);
     }
 
 	

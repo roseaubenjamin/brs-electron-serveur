@@ -33,7 +33,7 @@ class InfusionsoftController extends Controller
             );    
         }
         return response()->json(
-            array('data' => Infusionsoft::contacts( $infusionsoft->id , $request->all() ) )
+            Infusionsoft::contacts( $infusionsoft->id , $request->all() ) 
         );
     }
 

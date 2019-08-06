@@ -81,10 +81,32 @@ class Infusionsoft
 
     public function contacts( int $id , $query = array() )
     {
-        
+        $page = 1 ; 
+        if( isset($query['page']) ){
+            $page = (int) $query['page'] ; 
+        }
+
+        $search = "" ; 
+        if( isset($query['search']) ){
+            $search = $query['search'] ; 
+        }
+                
         $precached = Cache::get( "contact${id}" , collect( [] )) ; 
-        $responce = $precached->slice(0 , 100);
-        return $responce ;
+        $limit = 10 ; 
+        $show = ( $page - 1 ) * $limit ; 
+
+        $filterd = $precached->filter(function ($value, $key) use( $search ) {
+            if( $search == "" )
+                return true ;
+            return ( ( strpos( $value['full_name'] , $search ) !== false ) || ( strpos( $value['emailText'] , $search ) !== false ) ) ? true : false ; 
+        });
+
+        $count = $filterd->count(); 
+
+        $responce = $filterd->slice( $show , $limit )->values();
+
+        return array('data' => $responce , 'total' => $count , 'maxpage' => ceil ( ( $count / $limit ) )  ) ;
+    
     }
 
     public function fetchContact( int $id , $accessToken )
@@ -112,12 +134,14 @@ class Infusionsoft
         $percent_friendly = $nemb>100?'100%':$nemb.'%';
 
         $collection = collect($contact)->map(function ($item, $key) {
-            $email = $item['email_addresses'] ; 
+            $email = collect( $item['email_addresses'] )->map->email->values() ; 
+            $emailText = $email->implode(' '); 
             $given_name = $item['given_name'] ; 
             $family_name = $item['family_name'] ; 
+            $full_name = $family_name. ' ' .$given_name  ; 
             $id = $item['id'] ; 
-            return compact('email' , 'given_name' , 'family_name','id');
-        });
+            return compact('email','given_name','family_name','id','full_name','emailText');
+        })->values() ;
 
         Cache::forever( "contact${id}" , $collection->concat( $precached ) ) ; 
 

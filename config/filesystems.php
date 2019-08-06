@@ -50,8 +50,8 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'root' => env('APP_ENV')=='prod'?dirname(base_path()).DIRECTORY_SEPARATOR.'public_html':base_path().DIRECTORY_SEPARATOR.'public',
+            'url' => env('APP_URL'),
             'visibility' => 'public',
         ],
 

@@ -138,6 +138,27 @@ class Application
 
     }
 
+
+    /**
+     *  formation des url infusionsoft et vérifier si cette élement existe dans la base de donner 
+     * */
+    public function checkIfs( $id , array $info = array())
+    {
+        $user = $this->auth->user() ; 
+        $app = \App\Application::where( [ 'url' => $id.'.infusionsoft.com' ] )->first() ;
+        $app->load('teams') ; 
+        $team = $app->teams()->where( 'user_id' , $user->id )->first() ; 
+        if( $team )
+            return $app ;
+        return false ;
+    }
+
+    public function checkTrello( int $id , array $info = array())
+    {
+        
+
+    }
+
     
     
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Carbon;
 
 class LoginController extends Controller
 {
@@ -35,5 +36,20 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    } 
+    
+    /**
+     * Création du token d'authentification
+     *  */
+    protected function authenticated( $request, $user)
+    {
+
+        $token = $user->createToken('My Token')->accessToken;
+        $tok = [
+            'access_token' => $token ,
+        ];
+        return redirect()->route('home')
+            ->with( 'token' , $tok );
     }
+
 }

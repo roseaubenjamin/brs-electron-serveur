@@ -13,17 +13,30 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
 
 Route::group([ 'middleware' => 'auth:api'], function() {
+
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
     //route des applications 
     Route::get('/application', 'ApplicationController@index')->name('app_list');
     Route::put('/application/{id}', 'ApplicationController@update')->name('app_update');
     Route::get('/application/{id}', 'ApplicationController@show')->name('app_show');
     Route::get('/application/unique/{unique}', 'ApplicationController@showByUnique')->name('showByUnique');
     Route::post('/application', 'ApplicationController@create')->name('app_create');
+    Route::get('/application/check/ifs/{id}', 'ApplicationController@checkIfs')->name('app_check_ifs');
+    Route::get('/application/check/trello/{id}', 'ApplicationController@checkTrello')->name('app_check_trello');
+
+    Route::post('/note', 'NoteController@create')->name('note_create');
+    Route::get('/note', 'NoteController@index')->name('note_list');
+
+    Route::post('/form/{note}', 'FormController@create')->name('form_create');
+    Route::get('/form/{note}', 'FormController@index')->name('form_list');
+
+
     Route::get('/team/{app}', 'TeamController@index')->name('team_index');
 
     Route::get('/option/{name}', 'OptionController@find')->name('option_find');

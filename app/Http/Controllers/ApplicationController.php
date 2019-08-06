@@ -80,5 +80,22 @@ class ApplicationController extends Controller
         return Application::ifsauth( compact('code' , 'scope' , 'state' , 'url' , 'id' ) ) ;
     }
 
+    /**
+     *  Check si l'url d'infusionsoft est une application enregistrer ici 
+     *  */
+    public function checkIfs( Request $request , $id )
+    {
+        return response()->json(
+            array('data' => Application::checkIfs( $id , $request->all() ) )
+        );
+    }
+
+    /**
+     *  Check si l'url trello est une application enregistrer ici 
+     *  */
+    public function checkTrello( Request $request , $id )
+    {
+        dd( $id ) ; 
+    }
 
 }

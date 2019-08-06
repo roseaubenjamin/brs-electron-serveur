@@ -30,6 +30,9 @@ Vue.component('admin-menu', adminMenu);
 import OperateurMenu from '../components/operateur-menu';
 Vue.component('operateur-menu', OperateurMenu);
 
+import mobileMenu from '../components/mobile-menu';
+Vue.component('mobile-menu', mobileMenu);
+
 import adminCreateApplication from '../components/admin-create-application';
 Vue.component('create-application', adminCreateApplication);
 
@@ -50,7 +53,6 @@ Vue.component('mobile-form', mobileForm);
 
 import noteVocal from '../components/noteVocal';
 Vue.component('note-vocal', noteVocal);
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 import { 

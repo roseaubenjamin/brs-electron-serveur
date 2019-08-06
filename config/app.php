@@ -184,6 +184,9 @@ return [
         App\Libs\Provider\Team::class , 
         App\Libs\Provider\Option::class , 
         
+        App\Libs\Provider\Note::class , 
+        App\Libs\Provider\Form::class , 
+
     ],
 
     /*
@@ -241,6 +244,8 @@ return [
         'Trello' => App\Libs\Facades\Trello::class,
         'Application' => App\Libs\Facades\Application::class,
         'Option' => App\Libs\Provider\Option::class,
+        'Note' => App\Libs\Provider\Note::class,
+        'Form' => App\Libs\Provider\Form::class,
 
     ],
 

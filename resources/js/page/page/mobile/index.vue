@@ -75,7 +75,6 @@
                 ],
                 //le note vocal est enregistrer ici 
                 loading_btn : false , 
-                loading_more : false , 
                 defaultContact : null , 
                 placeVocal : null , 
                 tempstemp : null ,

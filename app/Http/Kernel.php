@@ -22,6 +22,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         //lancement de mes midlleware
         session::class , 
+        \App\Http\Middleware\Cors::class ,
     ];
 
     /**

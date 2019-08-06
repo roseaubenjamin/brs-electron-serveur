@@ -17,11 +17,10 @@ class infusionsoft extends store{
 	}
 
 	async allContacts( id , search , page = 1 , defaultContact = null ){
-		console.log( '---RECUPERATION DE LA LISTE DES CONTACTS DE IFS' , id )
-		let [ err , { data } ] = await api( '/api/infusionsoft/contacts/'+id ) ;
+		let [ err , res ] = await api( `/api/infusionsoft/contacts/${id}?page=${page}${(search?'&search='+search:'')}${(defaultContact?'&default='+defaultContact:'')}` ) ;
 		if ( err ) 
 			return [ err , null ]
-		return [ null , data ]
+		return [ null , res ]
 	}
 
 	async fetchContact( id ){
