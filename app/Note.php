@@ -15,5 +15,10 @@ class Note extends Model
     {
         return $this->hasMany(Form::class) ; 
     }
+
+    public function application()
+    {
+        return $this->belongsTo(Note::class) ; 
+    }
     
 }

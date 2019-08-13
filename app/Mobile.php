@@ -15,4 +15,9 @@ class Mobile extends Model
         return $this->morphMany(Options::class,'options');
     }
 
+    public function teams()
+    {
+        return $this->hasMany(Team::class);
+    }
+
 }

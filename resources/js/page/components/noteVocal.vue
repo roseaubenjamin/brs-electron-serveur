@@ -142,6 +142,10 @@
 
 		mounted(){
             this.init() ; 
+            this.on('vocallisten', ( url ) => {
+                if( url )
+                    new listen( 'vocale-listen' , url , 'audio-liste-note-record' )
+            })
 		}
 
 	}

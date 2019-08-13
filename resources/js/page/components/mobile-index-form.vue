@@ -77,8 +77,11 @@
 	
     import application from '../store/application' ; 
     import mobile from '../store/mobile' ; 
+    import form from '../store/form' ; 
     import placedata from '../libs/placedata' ; 
-	
+	import formateDescription from '../libs/formateDescription' ; 
+    import getForm from '../libs/getForm' ; 
+
 	export default {
 
 		props : [], 
@@ -89,45 +92,19 @@
                 form : mobile.form ,
             }
         },
-        methods : {
-
-            formateForm : function () {
-                let body = [] ; 
-                let doemotion = this.form.demotionnelle
-                body = [ ...body , { type : 'text' , name : 'demotionnelle' , value : doemotion } ]
-                let autre = this.form.autre 
-                body = [ ...body , { type : 'text' , name : 'autre' , value : autre } ]
-                let comment = this.form.comment 
-                body = [ ...body , { type : 'text' , name : 'comment' , value : comment } ]
-                let vitesse_closing_select = this.form.vitesseclosing 
-                body = [ ...body , { type : 'text' , name : 'vitesseclosing' , value : vitesse_closing_select } ]
-                let soncas_select = this.form.socas 
-                body = [ ...body , { type : 'text' , name : 'socas' , value : ( soncas_select?soncas_select.join(','):'' ) } ]
-                let produit_select = this.form.produit 
-                body = [ ...body , { type : 'text' , name : 'produit' , value : produit_select } ]
-                let commercial_autre = this.form.commercial_autre 
-                body = [ ...body , { type : 'text' , name : 'commercial_autre' , value : commercial_autre } ]
-                let commercial = this.form.commercial  
-                body = [ ...body , { type : 'text' , name : 'commercial' , value : commercial } ]
-                let sav_autre = this.form.sav_autre 
-                body = [ ...body , { type : 'text' , name : 'sav_autre' , value : sav_autre } ]
-                let sav = this.form.sav 
-                body = [ ...body , { type : 'text' , name : 'sav' , value : sav } ]
-                let comptabilite_autre = this.form.comptabilite_autre 
-                body = [ ...body , { type : 'text' , name : 'comptabilite_autre' , value : comptabilite_autre } ]
-                let comptabilite = this.form.comptabilite 
-                body = [ ...body , { type : 'text' , name : 'comptabilite' , value : comptabilite } ]
-                let categorie_select = this.form.categorie 
-                body = [ ...body , { type : 'text' , name : 'categorie' , value : categorie_select } ]
-                body = [ ...body , { type : 'text' , name : 'plaisir' , value : this.form.plaisir } ]
-                body = [ ...body , { type : 'text' , name : 'motivation' , value : this.form.motivation } ]
-                body = [ ...body , { type : 'text' , name : 'objections' , value : this.form.objections } ]
-                return body ;
-            },
-
-        },
 		created(){
-		
+		    //Récupération des forms par défault de l'utilisateur 
+            this.on('placeforme', async ( id ) => {
+                if( id ){
+                    let [ err , f ] = await form.find( id ) ; 
+                    console.log( f )
+                }
+            })
+
+            this.on('updateforme', async ( id ) => {
+                console.log( "lancer une evenement pour crée les formulaire " , id ) ; 
+                console.log( post )
+            })
 		}
 	}
 </script>

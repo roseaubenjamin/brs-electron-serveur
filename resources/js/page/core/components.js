@@ -33,17 +33,20 @@ Vue.component('operateur-menu', OperateurMenu);
 import mobileMenu from '../components/mobile-menu';
 Vue.component('mobile-menu', mobileMenu);
 
-import adminCreateApplication from '../components/admin-create-application';
+import adminCreateApplication from '../components/operateur-create-application';
 Vue.component('create-application', adminCreateApplication);
 
-import adminCreateMobile from '../components/admin-create-mobile';
+import adminCreateMobile from '../components/operateur-create-mobile';
 Vue.component('create-mobile', adminCreateMobile);
 
-import adminMobileOptionTrello from '../components/admin-mobile-option-trello';
+import adminMobileOptionTrello from '../components/operateur-mobile-option-trello';
 Vue.component('mobile-option-trello', adminMobileOptionTrello);
 
-import adminMobileOptionIfs from '../components/admin-mobile-option-ifs';
+import adminMobileOptionIfs from '../components/operateur-mobile-option-ifs';
 Vue.component('mobile-option-ifs', adminMobileOptionIfs);
+
+import operateurTrelloOptionUrl from '../components/operateur-trello-option-url';
+Vue.component('trello-option-url', operateurTrelloOptionUrl);
 
 import mobileIndexContactifs from '../components/mobile-index-contactifs';
 Vue.component('contactifs', mobileIndexContactifs);
@@ -53,6 +56,13 @@ Vue.component('mobile-form', mobileForm);
 
 import noteVocal from '../components/noteVocal';
 Vue.component('note-vocal', noteVocal);
+
+import operateurDeleteApplication from '../components/operateur-delete-application';
+Vue.component('delete-application', operateurDeleteApplication);
+
+import operateurDeleteMobile from '../components/operateur-delete-mobile';
+Vue.component('delete-mobile', operateurDeleteMobile);
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 import { 
@@ -83,6 +93,7 @@ import {
 	Select , 
 	DatePicker ,
 	InputNumber , 
+	Progress , 
 } from 'ant-design-vue';
 
 Vue.component( Menu.name, Menu );
@@ -152,6 +163,8 @@ Vue.component( Select.Option.name, Select.Option );
 Vue.component( DatePicker.name, DatePicker );
 
 Vue.component( InputNumber.name, InputNumber );
+
+Vue.component( Progress.name, Progress );
 
 let comp = {}
 

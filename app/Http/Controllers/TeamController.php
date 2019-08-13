@@ -24,12 +24,14 @@ class TeamController extends Controller
       */
     public function create( Request $request , $unique )
     {
+        if( \App\Application::where( 'id' , $unique )->first() )
+            return View('home');
         if( Auth::check() ){
-            if( $add = Team::create( $unique ) ){
-                if( $add=== 1 )
-                    return redirect('/') ; 
+            if( $add = Team::create( $unique ) ){ 
+                if( \is_numeric( $add ) )
+                    return redirect( '/team/'.$add );
                 else
-                    return View('home');
+                    return View('home')->with( 'newteam' , true );
             } 
         }else{
             return redirect('/login') ; 
@@ -37,5 +39,17 @@ class TeamController extends Controller
         //operateur
         return View('404');
     }
+
+    /**
+     * 
+     * Récupération des informations de team de cette utilisateur 
+     */
+    public function info( Request $request , $app )
+    {
+        return response()->json(
+            array('data' => Team::info( $app ) )
+        );
+    }
+    
 
 }

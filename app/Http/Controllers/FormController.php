@@ -14,8 +14,10 @@ class FormController extends Controller
         );
     }
 
-    public function index( Request $request )
+    public function index( Request $request , $app )
     {
-        dd( $request->all() ) ; 
+        return response()->json(
+            array('data' => Form::index( $app ) )
+        ); 
     }
 }

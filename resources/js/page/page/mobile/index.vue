@@ -1,12 +1,21 @@
 <template>
     <div :style="{ marginLeft: 'auto', marginRight: 'auto', background: '#fff', minHeight: '380px' , maxWidth : '992px' }">
+        <div v-if="error" style="position: fixed ; z-index: 1000; width: 50%; max-width: 500px ; left: 50% ; transform: translateX(-50%);">
+            <a-alert
+                message="Error"
+                :description="ErrorText"
+                type="error"
+                showIcon
+            />
+        </div>
         <a-row type="flex" justify="center">
             <a-col :xs="24" style="max-width: 500px;" >
                 <h1>{{$lang('mobile index title')}}</h1>
                 <p>{{$lang('mobile index description')}}</p>
                 <a-divider dashed />
                 <a-form :layout="'vertical'">
-                    <a-form-item v-show=" defaultNote.id == undefined">
+
+                    <a-form-item v-show="!duplicate&&!update">
                         <a-radio-group
                             buttonStyle="solid"
                             style="width: 100%;"
@@ -19,30 +28,47 @@
                             </a-radio-button>
                         </a-radio-group>
                     </a-form-item> 
+            
+                    <a-form-item  v-if="(listemobile && listemobile.length > 1)&&!update" :label="$lang('mobile select list')">
+                        <a-select @change="switchMobile" v-model="routeparamsid">
+                            <a-select-option v-for="item in listemobile" :key="item.id" :value="item.id">
+                                {{item.name}}
+                            </a-select-option>
+                        </a-select> 
+                    </a-form-item>
+
                     <a-form-item>
                         <note-vocal :placedata="placeVocal"></note-vocal>
                     </a-form-item>
-                    <a-form-item v-if="(mobile.assigned.trello.length||mobile.assigned.infusionsoft.length)&&defaultNote.id == undefined" :label="$lang('Pour ')" style="width: 100%;">
-                        <a-radio-group class="select-pour" buttonStyle="solid" v-model="form.pour" style="width: 100%;">
-                            <a-radio-button class="select-pour-option" v-for="item in (mobile.assigned.trello.length?mobile.assigned.trello:mobile.assigned.infusionsoft)" :key="item.id" :value="item.id" :style="mobile.assigned.trello.length?styleSelect(mobile.assigned.trello):styleSelect(mobile.assigned.infusionsoft)">{{item.name}}</a-radio-button>
+
+                    <a-form-item v-if="(( compte=='trello' && mobile.assigned.trello.length ) ||( compte=='infusionsoft' && mobile.assigned.infusionsoft.length ))&&!update" :label="compte=='trello' ? $lang('mobile index assigned trello') :$lang('mobile index assigned ifs')" style="width: 100%;">
+                        <a-radio-group class="select-pour" buttonStyle="solid" v-model="form.assigned" style="width: 100%;">
+                            <a-radio-button class="select-pour-option" v-for="item in assigned" :key="item.id" :value="item.id" :style="styleSelect(assigned)">{{item.value.name}}</a-radio-button>
                         </a-radio-group>
                     </a-form-item> 
-                    <contactifs v-if="( compte=='infusionsoft' && defaultNote.id == undefined ) || action " :label="$lang('Contact IFS ')" ></contactifs>
-                    <a-form-item v-if="compte=='trello' && defaultNote.id == undefined " :label="$lang('Priorité ')" style="width: 100%;">
+
+                    <contactifs v-if="( compte=='infusionsoft' ) &&!update"  ></contactifs>
+
+                    <a-form-item v-if="compte=='trello' && mobile.priority  &&!update " :label="$lang('mobile index priority trello')" style="width: 100%;">
                         <a-radio-group @change="prioriterChanger" class="select-pour" buttonStyle="solid" v-model="form.prioriter" style="width: 100%;">
-                            <a-radio-button class="select-pour-option" v-for="item in mobile.priority.labels" :key="item.id" :value="item.id" :style="styleSelect(mobile.priority.labels)">{{item.name}}</a-radio-button>
+                            <a-radio-button class="select-pour-option" v-for="item in mobile.priority" :key="item.id" :value="item.id" :style="styleSelect(mobile.priority)">{{item.value.name}}</a-radio-button>
                         </a-radio-group>
                     </a-form-item>   
-                    <a-form-item v-if="(compte=='infusionsoft' && defaultNote.id == undefined) || action " :label="$lang('Priorité ')" style="width: 100%;">
+
+                    <a-form-item v-if="( compte=='infusionsoft' ) &&!update " :label="$lang('mobile index priority ifs')" style="width: 100%;">
                         <a-radio-group @change="prioriterChanger" class="select-pour" buttonStyle="solid" v-model="form.prioriter" style="width: 100%;">
-                            <a-radio-button class="select-pour-option ellipsis" v-for="item in prioriters" :key="item.id" :value="item.id" :style="styleSelect(prioriters)">{{item.name}}</a-radio-button>
+                            <a-radio-button :style="styleSelect(prioriters)" class="select-pour-option ellipsis" v-for="item in prioriters" :key="item.id" :value="item.id">{{item.name}}</a-radio-button>
                         </a-radio-group>
                     </a-form-item>   
-                    <a-form-item :label="$lang('Date ')" v-if="(defaultNote.id == undefined) || action " >
+
+                    <a-form-item :label="$lang('mobile index date')" v-if="!update" >
                         <a-date-picker style="width: 100%;" v-model="form.date" @change="changeDate"/>
                     </a-form-item>
-                    <mobile-form></mobile-form>
-                    <a-button type="primary" icon="table" @click="create" block :loading="loading_btn" >Valider</a-button>
+
+                    <mobile-form  v-if="!update" ></mobile-form>
+                    
+                    <a-button :disabled="error" type="primary" icon="table" @click="create" block :loading="loading_btn" >Valider</a-button>
+
                 </a-form>
             </a-col>
         </a-row>
@@ -52,11 +78,12 @@
 
     import mobile from '../../store/mobile' ; 
     import application from '../../store/application' ; 
-    //import note from '../store/note' ; 
+    import note from '../../store/note' ; 
+    import form from '../../store/form' ; 
     import makeid from '../../libs/makeid' ; 
     import wait from '../../libs/wait' ; 
-    import styleSelect from '../../libs/styleSelect' ; 
     import formateDescription from '../../libs/formateDescription' ; 
+    import getForm from '../../libs/getForm' ; 
     import moment from 'moment' ; 
 
     export default {
@@ -78,57 +105,95 @@
                 defaultContact : null , 
                 placeVocal : null , 
                 tempstemp : null ,
-                //information sur la default note 
-                defaultNote  : {} , 
-                //update or duplicate note 
-                action : (window.location.search.match(new RegExp('[?&]' + 'action' + '=([^&]+)')) || [, null])[1], 
+                //valeur de paramètre de route par défault 
+                routeparamsid  : this.$route.params.id , 
+                //description des erreur 
+                ErrorText : '',
+                error : false , 
+
+                //affichage en fonction action 
+                duplicate : null , 
+                update : null , 
+                //liste possible des applications mobile 
+                listemobile : [] , 
             }
         },
+
+        computed : {
+            assigned : function(){
+                if( this.compte == 'trello' ){
+                    return this.mobile.assigned.trello
+                }else if( this.compte == 'infusionsoft' ){
+                    return  this.mobile.assigned.infusionsoft  ; 
+                }
+            },
+        }, 
+
         watch : {
             compte : async function () {
                 if ( this.compte == 'trello' ) { 
-                    this.mobile.assigned.trello && this.mobile.assigned.trello[0] ? this.form.pour = this.mobile.assigned.trello[0].id :'';
-                    this.mobile.priority && this.mobile.priority[0] ? this.form.prioriter = this.mobile.priority[0].id :'';
-                    this.prioriterChanger() ; 
+                    this.switchTrello() ; 
                 }else if ( this.compte == 'infusionsoft' ) {
-                    this.fetching = true ;
-                    this.mobile.assigned.infusionsoft && this.mobile.assigned.infusionsoft[0] ? this.form.pour = this.mobile.assigned.infusionsoft[0].id :'';
-                    this.form.prioriter = 2 ; 
-                    this.prioriterChanger() ;
-                    return ; 
-                    let [ e , d ] = await infusionsoft.allContact( this.option.external.infusionsoft , '' , this.defaultContact ) ;
-                    console.log( d ) ; 
-                    this.form.contactTotal = d.maxpage ; 
-                    console.log( 'compte : async function' , this.infusionsoft.contacts ) ; 
-                    this.fetching = false ;
-                    this.suggestionLoadSearch = true ; 
-                    this.infusionsoft.contacts.length?this.handleSearch(''):'' ; 
+                    this.switchInfusionsoft() ; 
                 }
             },
         },
         methods : {
             
-            styleSelect ,
+            styleSelect( data ) {
+                if ( data.length == 2 || data.length == 1 ) {
+                    return { width : '50%' }
+                }else if ( data.length == 3 ) {
+                    return { width : '33.33333333333333333333%' }
+                }else if ( data.length > 3 && data.length< 6) {
+                    return { width : '50%' }
+                }else if ( data.length >= 6 ) {
+                    return { width : '33.33333333333333333333%' }
+                }
+            },
+
+            //switch de compte vers trello 
+            switchTrello : async function(){
+                console.log( this.mobile.applications.trello )
+                this.mobile.priority && this.mobile.priority[0] ? this.form.prioriter = this.mobile.priority[0].id :'';
+                this.prioriterChanger() ; 
+                await mobile.findAssigned( this.routeparamsid , 'trello' )
+                let note = this.mobile.assigned.trello.find( e => e.value.idMembers == 'default' )
+                if( note ) this.form.assigned = note.id ; 
+                else this.mobile.assigned.trello && this.mobile.assigned.trello[0] ? this.form.assigned = this.mobile.assigned.trello[0].id :'';
+            },
+
+            switchInfusionsoft : async function(){
+                console.log( this.mobile.applications.infusionsoft )
+                this.fetching = true ;
+                this.form.prioriter = 2 ; 
+                this.prioriterChanger() ;
+                await mobile.findAssigned( this.routeparamsid , 'infusionsoft' )
+                let note = this.mobile.assigned.infusionsoft.find( e => e.value.user_id == 'note' )
+                if( note ) this.form.assigned = note.id ; 
+                else this.mobile.assigned.infusionsoft && this.mobile.assigned.infusionsoft[0] ? this.form.assigned = this.mobile.assigned.infusionsoft[0].id :'';
+                return !0;
+            },
 
             prioriterChanger : function ( ) {
                 let add = this.form.prioriter ;
                 this.compte == 'trello'?
                 this.mobile.priority.forEach( e => {
                     if ( e.id == this.form.prioriter ) {
-                        add = parseInt( e.cardId ) ;  
+                        add = parseInt( e.value.date ) ;  
                     }
                 }): 
                 add = this.form.prioriter
                 this.form.date = moment().clone().add( add , 'day' )
             },
 
-            formateTitle : function () {
-                return placedata('categorieArray' , this.form.categorie)+" "+this.form.produit+" -"+( this.form.categorie !== 'autre' ? (this.form[this.form.categorie]=='_____'? this.form[this.form.categorie+"_autre"] : this.form[this.form.categorie]) : this.form.autre )
-            }, 
-
-            errorCreate(){
-                alert( 'ERREUR DE CR2ATION ' )
+            errorCreate(err){
+                this.error = true
+                this.ErrorText = this.$lang( err )
                 this.loading_btn = false ;
+                setTimeout( () => {
+                    this.error = false
+                }, 5000);
             },
 
             //ici on change la valeur des date 
@@ -136,217 +201,108 @@
                 this.form.prioriter = null ; 
             }, 
 
-            //création de card dans trello
-            trelloCard : async function ( update ) {
-                console.log( this.defaultNote , update ) ;
-                this.loading_btn = true ; 
-                let body = {
-                    title : this.formateTitle() , 
-                    compteId : this.option.external.trello , 
-                    description : this.formateDescription(this.formateForm()) , 
-                    pour : this.form.pour , 
-                    prioriter : this.form.prioriter , 
-                    date : this.form.date.format('YYYY-MM-DDTHH:mm:ssZ'), 
-                }
-                console.log( body ) ; 
-                let err , note ; 
-                if ( this.defaultNote && this.defaultNote.id ) {
-                    body['nativeId'] = this.defaultNote.id ; 
-                    [ err , note ] = await trello.cardUpdate( body ) ;
-                }else{
-                    [ err , note ] = await trello.card( body ) ;
-                }
-                if ( err ) {
-                    return this.errorCreate() ; 
-                } 
-                return note
-
-            },
-
-            //création de note d'infusionsoft avec la mise a jour 
-            ifsnoteCreate : async function ( update ) {
-                console.log( this.defaultNote , update ) ;               
-                if ( !this.form.contactId && !update ) {
-                    return alert(' Contact Infusionsoft oblogatoire')
-                }
-               this.loading_btn = true ; 
-                let body = {
-                    title : this.formateTitle() , 
-                    compteId : this.option.external.infusionsoft , 
-                    description : 'https://therapiequantique.net/read/'+this.form.NOTEID , 
-                    pour : this.form.pour , 
-                    prioriter : this.form.prioriter , 
-                    date : this.form.date.format('YYYY-MM-DDTHH:mm:ssZ'), 
-                    contactId : this.form.contactId , 
-                }
-                let err , note ; 
-                if ( this.defaultNote && this.defaultNote.id ) {
-                    body['nativeId'] = this.defaultNote.id ; 
-                    [ err , note ] = await infusionsoft.noteUpdate( body ) ;
-                }else{
-                    [ err , note ] = await infusionsoft.note( body ) ;
-                }
-                if ( err ) {
-                    this.errorCreate() ; 
-                } 
-                return note
-            },
-
             async create(){
-
-                if ( ! this.form.note && !this.placeVocal ) 
-                    return alert('Le vocal est obligatire')
-                let noteSave = null ;
-
-                console.log( this.form ) ; 
-                return
-                this.compte=='trello'?noteSave = await this.trelloCard((this.$route.params.id !== undefined?true:false)):noteSave = await this.ifsnoteCreate((this.$route.params.id !== undefined?true:false)) ; 
-                if ( !noteSave || (!noteSave.url&&this.compte == 'trello') ) {
-                    return this.errorCreate() ; 
+                this.loading_btn = true ;
+                let [ err , success ] = await mobile.vocal( this.routeparamsid , this.compte , this.routeparamsid ) ; 
+                if( err )
+                    return this.errorCreate( err )
+                //lancer une evenement pour crée les formulaire 
+                let [ errForm , post ] = await form.create( success.id , getForm( this.form ) )
+                //@todo : dans le cas ou l'enregistrement du formulaire a échouer, on peut répéter cette action 
+                if( post ){
+                    return window.location.href = `${window.APP_URL}/read/${this.form.NOTEID}?state=success` ;
                 }
-                //si le note que vous évez crée est un card de trello, alors on fait la recréation des ID 
-                let id = null ; 
-                this.compte == 'trello' ? id = decodeURIComponent( noteSave.url.replace('https://trello.com', '') ).split('/').join('_').replace('/', '_').normalize('NFD').replace(/[\u0300-\u036f]/g, "") : '' 
-                console.log( noteSave );
-                //création de note dans notre application 
-                let url = '/upload?' ; 
-                url += 'NOTEID='+this.form.NOTEID
-                url += '&type='+(this.compte=='trello'?'trello':'infusionsoft') 
-                url += '&appId='+(this.compte=='trello'?this.option.external.trello:this.option.external.infusionsoft)
-                url += '&nativeId='+noteSave.id
-                url += '&attache='+(this.compte=='trello'?'card':(this.form.pour=="default"?'note':'task'))  
-                if ( id ) 
-                    url += '&newId='+id
-                url += '&text='+''
-                url += '&title='+''
-                console.log( url ) ; 
-                if ( this.$route.params.id !== undefined ) {
-                    url += '&update='+true
-                }
-                if ( this.form.note ) {
-                    url += '&file='+true
-                }else{
-                    url += '&file='+false
-                }
-                let formData = new FormData();
-                formData.append('file', this.form.note );
-                let [ err , vocal ] = await note.noteCreate( url , formData )
-                console.log( vocal ) ;
-                if ( err ) {
-                    alert('@TODO:il y a une erreur')
-                } 
-                let [ error , formSave ] = await form.formCreate( vocal.id , this.formateForm() )
-                console.log( formSave );
-                console.log( 'Upload a formulaire' )
-                let [ errorFlash , flash ] = await index.setFlash( { create : true } ) ;
-                if ( flash ) {
-                    window.location.href= window.urlapplication + "/read/"+ ( id ? id : this.form.NOTEID)
-                }
-               this.loading_btn = false ; 
-            },  
-
-            async trellonote( n ){
-                let [ err , note ] = await trello.itemCard( n.nativeId , n.ApplicationId ) ;
-                console.log( note )
-                if ( !note.name ) 
-                    return this.existe = false ;
-                this.title = note.name ; 
-                this.defaultNote = Object.assign({} , note )
-                return note  
-            },
-
-            async ifsfindnote( n ){
-                let err , note ; 
-                if ( n.attache == 'note' ) 
-                    [ err , note ] = await infusionsoft.itemNote( n.nativeId , n.ApplicationId ) ;
-                else if ( n.attache == 'task' ) 
-                    [ err , note ] = await infusionsoft.itemTask( n.nativeId , n.ApplicationId ) ;  
-                //defaultValueContact
-                //récupération des listes de tout les contacts 
-                //si dans la liste des contacts, on n'a pas le contact si contre 
-                //on ajoute dans le première argument 
-                //s'il existe, on transforme dans la premièer argument
-                this.defaultContact = note.contact.id ; 
-                this.compte = this.application.item.type ; 
-                this.form.contactId = note.contact.id ; 
-                if ( ! note.title ) 
-                    return this.existe = false ;
-                this.defaultNote = Object.assign({} , note )
-                this.existe = true ; 
-                return note  
-            },
-
-            defaultForm( form ){
-                for( let item of form ){
-                    if ( item.name == 'socas') {
-                        this.form[ item.name ] = item.value.split(',').map( e => parseInt( e ) )
-                    }else{
-                        let place = parseInt( this.form[ item.name ] )
-                        this.form[ item.name ] = isNaN( place ) ? item.value : place;
-                    }
-                }
-            },
-
-            /*
-             * Chargement de tout les donners utilse dans l'update 
-            */
-            async loadUpdate(){
-                let [ err , noteItem ] = await note.find( this.$route.params.id ) ;
-                console.log( noteItem )
-                this.placeVocal = noteItem.unique 
-                if ( err || !noteItem || (noteItem && !noteItem.ApplicationId) ) {
-                    return this.existe = false ;
-                    //note n'existe pas on vous redirige a la page nouvelle note 
-                }
-                await application.itemApplication( noteItem.ApplicationId ) ; 
-                if ( noteItem.type == "infusionsoft" ) {
-                    this.option.external.trello = null ; 
-                    this.option.external.infusionsoft = noteItem.ApplicationId ; 
-                    this.ifsfindnote( noteItem )
-                } 
-                if ( noteItem.type == "trello" && ! this.action ) {
-                    this.option.external.infusionsoft = null ;
-                    this.option.external.trello = noteItem.ApplicationId ;
-                    this.trellonote( noteItem )
-                    this.compte = this.application.item.type ; 
-                } 
-                if ( noteItem.type == "trello" && this.action ) {
-                    //this.option.external.infusionsoft = null ;
-                    await exoption.findOption() ; 
-                    this.option.external.trello = null ;
-                    if ( !this.option.external.infusionsoft ) {
-                        //si l'utilisateur n'a pas de compte infurionsosft 
-                        //on le redirige pour en configuer un 
-                        return this.$router.push({ name: 'option' }) 
-                    }
-                    this.trellonote( noteItem )
-                    this.compte = 'infusionsoft' ; 
-                } 
-                //récupération des formulaires de l'application 
-                let [ errorForm , formNote ] = await form.all( noteItem.id ) ; 
-                if ( errorForm ) {
-                    console.log( errorForm )
-                    return
-                }
-                this.defaultForm( formNote ) ; 
+                return this.errorCreate( 'mobile error form' );
             }, 
+
+            async initDupCop(){
+                //récupération des possible mobile pour cette notes
+                let [ err , natibem ] = await mobile.findMobileListeFromUnique( this.$route.params.unique ) ;
+                if( err ){
+                    this.error = true 
+                    this.ErrorText = this.$lang('mobile error mobile liste') 
+                    return 
+                }
+                this.listemobile = [ ...natibem ] ; 
+                this.routeparamsid = this.listemobile[0].id;
+                console.log( natibem ) 
+                let [ e , n ] = await note.find( { unique : this.$route.params.unique } ) ; 
+                if( !n ){
+                    this.error = true 
+                    this.ErrorText = this.$lang('mobile error duplicate note existe') 
+                    return 
+                }
+                this.duplicate = n ; 
+                this.compte = 'infusionsoft' ; 
+                await this.switchMobile() ; 
+                //récupération note et ajout de note dans 
+                this.emit('vocallisten', `${window.APP_URL}/audio/${this.$route.params.unique}` )
+                this.emit('placeforme', this.duplicate.id )
+                //await mobile.duplicate( this.routeparamsid ) ; 
+            },
+
+            async switchMobile(){
+                await mobile.find( this.routeparamsid ) ; 
+                if( this.compte == "infusionsoft" )
+                    return this.switchInfusionsoft(); 
+                else if( this.compte == "trello" )
+                    return this.switchTrello(); 
+            },
+
+            async initNew(){
+                this.form.NOTEID = makeid(12) ;  
+                //Récupération des options de mobile 
+                await mobile.find( this.routeparamsid ) ; 
+                if( this.mobile.applications.infusionsoft ){
+                    this.compte='infusionsoft' 
+                    this.switchTrello() 
+                }else{
+                    this.compte='trello' 
+                    this.switchInfusionsoft(); 
+                }
+                if( this.mobile.applications.trello )
+                    await mobile.findPriorty( this.routeparamsid )
+            } ,
+
+            async initUpdate( isSingle ){
+
+                let unique = this.$route.params.unique ; 
+                if( isSingle ){
+                    unique = this.$route.params.id ; 
+                    let [ err , natibem ] = await mobile.findMobileListeFromUnique( unique ) ;
+                    if( err ){
+                        this.error = true 
+                        this.ErrorText = this.$lang('mobile error mobile liste') 
+                        return 
+                    }
+                }
+
+                let [ e , n ] = await note.find( { unique } ) ; 
+                if( !n ){
+                    this.error = true 
+                    this.ErrorText = this.$lang('mobile error update note existe') 
+                    return 
+                }
+
+                this.update = n ; 
+                
+                this.emit('vocallisten', `${window.APP_URL}/audio/${unique}` )
+
+            },
 
             async init(){
                 await this.$nextTick() ; 
-                this.form.NOTEID = this.$route.params.id?this.$route.params.id:makeid(12) ;  
                 this.loader = false;
-                console.log( this.$route.params.id )
-                if ( this.$route.params.id !== undefined ) {
-                    this.loadUpdate() ; 
-                }else{
-                    //Récupération des options de mobile 
-                    await mobile.find() ; 
-                    if ( !this.option.external.infusionsoft&&!this.option.external.trello ) {
-                        //ouvrire la page option 
-                        return this.$router.push({ name: 'option' }) 
-                    }
-                    this.option.external.infusionsoft?this.compte='infusionsoft':this.compte='trello' ;
-                }               
+                if( this.$route.name == "Duplicate" || this.$route.name == "Copy" )
+                    this.initDupCop() ; 
+                else if( this.$route.name == "Home" )
+                    this.initNew() ; 
+                else if( this.$route.name=="Update" )
+                    this.initUpdate() ; 
+                else if( this.$route.name=="UpdateSingle" )
+                    this.initUpdate(true) ; 
+
+                console.log( this.routeparamsid )
             }
 
         },

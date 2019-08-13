@@ -1,9 +1,11 @@
-export default async function api( endpoint , op = {} ) {
+export default async function api( endpoint , op = {} , isjson = true ) {
 	let headers = { 
 		'X-Requested-With' : 'XMLHttpRequest' , 
-		'Accept' : 'application/json' , 
-		'Content-Type' : 'application/json' ,  
 		'X-CSRF-TOKEN' : document.querySelector( 'meta[name="csrf-token"]' ).getAttribute('content') , 
+	}
+	if( isjson ){
+		headers['Accept'] = 'application/json' ; 
+		headers['Content-Type'] = 'application/json' ; 
 	}
 	if ( op.headers ) {
 		op.headers = { ...op.headers , headers }

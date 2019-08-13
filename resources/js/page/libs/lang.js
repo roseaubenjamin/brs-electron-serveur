@@ -2,7 +2,7 @@ import Mustache from 'mustache'
 import { decode } from './htmlentities'
 
 let local = null ; 
-let all = Object.assign({}, window.trans );
+let all = Object.assign({}, document.trans );
 
 let search = function ( id , data ) {
     if (id&&all[id]) {

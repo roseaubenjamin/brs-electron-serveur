@@ -24,5 +24,14 @@ class ViewController extends Controller
 	public function mobile()
     {
 		return View('mobile');
-    }    
+	}
+	
+	public function read( Request $request , $unique )
+    {
+		$state = $request->get('state') ; 
+		if( $state )
+			return redirect( '/read/'.$unique )->with('state','new');
+		return View('read');
+
+	}
 }

@@ -25,6 +25,13 @@ class MobileController extends Controller
         );
     }
 
+    public function find( Request $request , \App\Mobile $app )
+    {
+        return response()->json(
+            array('data' => Mobile::find( $app , $request->all() ))
+        );
+    }
+    
     public function assigned( Request $request , \App\Mobile $app )
     {
         return response()->json(
@@ -52,6 +59,51 @@ class MobileController extends Controller
             array('data' => Mobile::priortyFind( $app , $request->all() ) )
         );
     }
+
+    public function deassigned( Request $request , \App\Options $app )
+    {
+        return response()->json(
+            array('data' => Mobile::deassigned( $app ) )
+        );
+    }
     
+    public function priortyDelete( Request $request , \App\Options $app )
+    {
+        return response()->json(
+            array('data' => Mobile::deassigned( $app ) )
+        );
+    }
     
+    /**
+     * Supression des mobile option
+     */
+    public function deleteOption( Request $request , \App\Mobile $app )
+    {
+        return response()->json(
+            array('data' => Mobile::deleteOption( $app ) )
+        );
+    }
+
+    public function mobileUnique( Request $request , $unique )
+    {
+        return response()->json(
+            array('data' => Mobile::mobileUnique( $unique ) )
+        );
+    }
+    
+    public function createVocal( Request $request , \App\Mobile $app )
+    {
+        return response()->json(
+            array('data' => Mobile::createVocal( $app , $request->all() ) )
+        );
+    }
+
+    public function deleteMobile( Request $request , \App\Mobile $app )
+    {
+        return response()->json(
+            array('data' => Mobile::deleteMobile( $app ) )
+        );
+    }
+    
+
 }

@@ -12,3 +12,5 @@ npm-debug.log
 yarn-error.log
 .vscode
 yarn.lock
+public/js/index.js
+info.md

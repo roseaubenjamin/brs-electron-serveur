@@ -36,9 +36,20 @@ class Application extends Model
         }
     }
 
+    public function options()
+    {
+        return $this->morphMany(Options::class,'options');
+    }
+
+
     public function teams()
     {
         return $this->hasMany(Team::class) ; 
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class) ; 
     }
 
 }

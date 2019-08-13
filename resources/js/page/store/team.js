@@ -19,6 +19,16 @@ class team extends store{
 		return [ null , this.state.lists ]
 	}
 
+	/*
+	 * Récupération de mon info sur le teamp de l'application en pramètre 
+	*/
+	async info( id ){
+		let [ err , { data } ] = await api( '/api/team/info/'+ id )  ; 
+		if ( err ) 
+			return [ err , null ]
+		return [ false , data ]
+	}
+
 } 
 
 export default new team() ;

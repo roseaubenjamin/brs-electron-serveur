@@ -38,6 +38,19 @@ class TrelloController extends Controller
         );
     }
 
+    public function card( Request $request , $app , $card )
+    {
+        $trello = \App\Application::find( $app ) ;
+        if( !$trello ){
+            return response()->json(
+                array('data' => [] )
+            );    
+        }
+        return response()->json(
+            array('data' => Trello::card( $trello->id , $trello->accessToken , $card ) )
+        );
+    }
+
     public function membres( Request $request , $app )
     {
         $trello = \App\Application::find( $app ) ;

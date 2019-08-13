@@ -4,7 +4,9 @@ import vueRouter from 'vue-router';
 Vue.use(vueRouter);
 
 import Home from '../page/admin/index';
-import Team from '../page/admin/team';
+import Team from '../page/operateur/team';
+import Application from '../page/operateur/index';
+import Note from '../page/operateur/note';
 
 let $application = document.getElementById('application') ; 
 
@@ -15,7 +17,6 @@ let router = new vueRouter({
 	base : $application.getAttribute('data-base'),
 	routes : [
 		{ name: 'Home', path : '/', component : Home },
-		{ name: 'Team', path : '/team/:id', component : Team },
 		{ path : '*', redirect : '/'},
 	],
 })

@@ -5,6 +5,9 @@
 		    :visible="visible"
 		    @ok="handleOk"
 		    :confirmLoading="confirmLoading"
+		    :closable="closable"
+		    :maskClosable="closable"
+		    :destroyOnClose="true"
 		    @cancel="handleCancel">
 		    <div v-if="options.footer" slot="footer"></div>
 	      	<component :data="data" v-if="component" v-bind:is="component"></component>
@@ -24,6 +27,7 @@
 			    visible: false,
 			    confirmLoading: false,
 			    data : {} , 
+			    closable : true ,
             }
         },
         computed: {
@@ -43,10 +47,21 @@
 		    },
 
         },
+
+        beforeDestroy(){
+			this.confirmLoading = false;
+        },
+
+        destroyed(){
+			this.confirmLoading = false;
+        },
+
 		mounted(){
 
 			this.on('modal',(options) => {
 				this.visible = true ; 
+				this.closable = options.closable!==undefined?options.closable:true;
+				console.log( this.closable ) ; 
 				this.options = Object.assign({} ,  { ...options } )
 				console.log( this.options )
 				if ( this.options.data ) {
@@ -62,6 +77,10 @@
 		      	}, 300);
 			})
 
+			this.on('resetbtnmodale',(options) => {
+				this.confirmLoading = false;
+			})
+			
 		}
 	}
 </script>

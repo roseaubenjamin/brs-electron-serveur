@@ -19,12 +19,13 @@ Route::get('/app/ifs/auth/{id}', 'ApplicationController@ifsauth')->name('app_ifs
 Route::get('/', 'ViewController@home')->name('home');
 Route::get('/public', 'PublicController@index')->name('public');
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
-Route::get('/mobile/{id}', 'ViewController@mobile')->name('mobile');
+Route::get('/mobile/{id}/{action?}', 'ViewController@mobile')->name('mobile');
+Route::get('/read/{unique}', 'ViewController@read')->name('read');
 Route::get('/team/{unique}', 'TeamController@create')->name('teamCreate');
+Route::get('/audio/{unique}', 'NoteController@audio')->name('audio');
 
 //route des la page authentification
 Auth::routes();
-
 
 //@todo : ici on doit encore faire le filtre de quelle URL retourne a la 404
 //et quelle url devrait redireger vers home 

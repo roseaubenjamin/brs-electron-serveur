@@ -1,14 +1,24 @@
 <template>
 	<a-layout-header class="header">
         <div class="logo" >
-            <router-link :to="{name:'Home'}">
+            <a href="/">
                 <a-avatar  src="/img/logo.png" /> 
-            </router-link>
+            </a>
         </div>
         <a-menu :style="{ lineHeight: '64px' , float : 'right' }" v-model="current"  mode="horizontal">
-            <a-menu-item key="Home">
-                <router-link :to="{name:'Home'}">
+            <a-menu-item key="Dashboard" v-if="this.$route.params.id" >
+                <router-link :to="{name:'Dashboard',params : { id : this.$route.params.id }}">
                     {{$lang('operateur menu home')}} 
+                </router-link>
+            </a-menu-item>
+            <a-menu-item key="Team" v-if="this.$route.params.id" >
+                <router-link :to="{name:'Team',params : { id : this.$route.params.id }}">
+                    {{$lang('operateur menu team')}} 
+                </router-link>
+            </a-menu-item>
+            <a-menu-item key="Note" v-if="this.$route.params.id" >
+                <router-link :to="{name:'Note',params : { id : this.$route.params.id }}">
+                    {{$lang('operateur menu note')}} 
                 </router-link>
             </a-menu-item>
         </a-menu>
@@ -21,7 +31,7 @@
 		props : [], 
 		data(){
             return {
-            	current : ['Home'] , 
+            	current : [] , 
             }
         },
 
@@ -37,6 +47,9 @@
         methods : {
 
         },
+        mounted(){
+        	this.current = [ this.$route.name ]
+        }
 	}
 </script>
 <style>

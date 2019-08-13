@@ -5,6 +5,7 @@ class infusionsoft extends store{
 	constructor(){
 		super();
 		this.state = {
+			teams : []
 		}
 	}
 
@@ -23,15 +24,38 @@ class infusionsoft extends store{
 		return [ null , res ]
 	}
 
-	async fetchContact( id ){
+	async fetchContact( id , callback ){
 		let err , data ; 
 		do{
 			[ err , { data } ] = await api( '/api/infusionsoft/fetchContact/'+id ) ;
-			console.log( data ) ; 
+			callback?callback( data ):'' ; 
 		}while( !data || !data.success )
 		if ( err ) 
 			return [ err , null ]
 		return [ null , this.state.teams ]
+	}
+
+	//récupération des applications qui n'on pas de contact id 
+	//ou qui a de nouvelle contact 
+	async findContactSynhronisation(){
+		let [ err , { data } ] = await api( '/api/infusionsoft/check/membres' ) ;
+		if ( err ) 
+			return [ err , null ]
+		return [ null , data ]
+	}
+
+	async findNote( app , id ){
+		let [ err , { data } ] = await api( `/api/infusionsoft/note/${app}/${id}` ) ;
+		if ( err ) 
+			return [ err , null ]
+		return [ null , data ]
+	}
+
+	async findTask( app , id ){
+		let [ err , { data } ] = await api( `/api/infusionsoft/task/${app}/${id}` ) ;
+		if ( err ) 
+			return [ err , null ]
+		return [ null , data ]
 	}
 
 } 

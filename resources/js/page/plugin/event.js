@@ -10,11 +10,9 @@ let pause = [] ;
 
 MyPlugin.install = function (Vue, options) {
   	
-  	Vue.prototype.on = function (event,func) {
-		if (on[event]) {}
-		else{
-			on[event] = [] ;
-		}
+  	Vue.prototype.on = function (event,func,unique=false) {
+		if ( on[event] && unique ) return on[event][0] = func ; 
+		else if ( !on[event] ) on[event] = [] ; 
 		return on[event].push(func);
   	}
 

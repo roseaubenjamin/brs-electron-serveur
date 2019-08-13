@@ -149,5 +149,43 @@ class Trello
         return $collection ; 
     }
 
+    public function cards( int $id , string $accessToken )
+    {
+        $board = Option::find("application_${id}_native") ; 
+        if( !$board->value )
+            return [] ;             
+        $trello = $this->getTrello( $id , $accessToken ) ; 
+        $cars = $trello->getBoardCards( $board->value ); 
+        $collection = collect($cars);
+        $collection = $collection
+            ->map(function ($item, $key) {
+                $id = $item->id ; 
+                $idList = $item->idList ;
+                $shortUrl = $item->shortUrl ;
+                $url = $item->url ;
+                return compact( 'id' , 'idList' ,'shortUrl'  ,'url' );
+            });
+        return $collection ; 
+    }
+
+    public function card( int $id , string $accessToken , $card )
+    {
+        $board = Option::find("application_${id}_native") ; 
+        if( !$board->value )
+            return [] ;             
+        $trello = $this->getTrello( $id , $accessToken ) ; 
+        return $trello->getCard( $card ); 
+    }
+    
+    public function addCard( int $id , string $accessToken , $card )
+    {
+        $board = Option::find("application_${id}_native") ; 
+        if( !$board->value )
+            return [] ;             
+        $trello = $this->getTrello( $id , $accessToken ) ; 
+        return $trello->addCard( $card ); 
+    }
+    
+
 }
 

@@ -1,5 +1,5 @@
 <template>
-    <a-form-item >
+    <a-form-item :label="$lang('mobile index contact ifs')" >
         <a-select
             dropdownClassName="suggestion_dropdown"
             showSearch
@@ -144,7 +144,7 @@
             handleMore : async function () {
                 this.contactPage++  ;
                 this.loading_more = true ; 
-                await this.getData() ;  
+                await this.getData( true ) ;  
                 setTimeout( () => {
                     this.loading_more = false ; 
                 }, 600); 
@@ -155,36 +155,30 @@
                 this.suggestion = [] ; 
                 this.suggestionLongeur = 0 ; 
                 this.contactPage = 1 ;
-                let recal = false ;  
-                if ( this.inSearch === true ) {
-                    recal = true ;
-                }
                 this.contactSearch = search ;
                 this.suggestionLoadSearch = false ; 
                 this.fetching = true ; 
-                this.inSearch = true ; 
                 clearTimeout( this.tempstemp )
                 this.tempstemp = setTimeout( async () => {
                     clearTimeout( this.tempstemp )
                     console.log('---SERACHE : ' , search )
                     await this.getData() ; 
                     this.inSearch = false ; 
-                    if ( recal ) {
-                        setTimeout( async () => {
-                            this.handleSearch( search )
-                        }, 300);
-                    }
                 }, 500 );
             }, 
 
-            async getData(){ 
+            async getData( addable = false ){ 
                 this.fetching = true ; 
                 let [ err , data ] = await infusionsoft.allContacts( this.mobile.applications.infusionsoft , this.contactSearch , this.contactPage , this.defaultContact ) ;
-                return this.setData( data ) ; 
+                console.log( data.search , this.contactSearch , data.data.length )
+                return this.setData( data , addable ) ; 
             },
 
-            setData( { data , maxpage , total } ){
-                this.contacts = data ; 
+            setData( { data , maxpage , total } , addable ){
+                //this.contacts = data ; 
+                if( addable ) this.suggestion = [ ...this.suggestion , ...data ] 
+                else this.suggestion = [ ...data ] 
+
                 this.contactTotal = maxpage ;
                 this.fetching = false ; 
                 this.suggestionLoadSearch = true ; 

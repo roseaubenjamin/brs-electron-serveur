@@ -4,6 +4,18 @@ export default class store{
 		this.event = {}
 	}
 
+	//converstion object en paramètre
+	$toparams( obj ){
+		var str = "";
+		for (var key in obj) {
+		    if (str != "") {
+		        str += "&";
+		    }
+		    str += key + "=" + encodeURIComponent(obj[key]);
+		}
+		return str ;
+	}
+
 	$on( event , cbl ){
 		if ( this.event[event] ) 
 			this.event[event].push( cbl )

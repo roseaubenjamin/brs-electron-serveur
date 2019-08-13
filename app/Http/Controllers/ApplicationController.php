@@ -94,8 +94,29 @@ class ApplicationController extends Controller
      *  Check si l'url trello est une application enregistrer ici 
      *  */
     public function checkTrello( Request $request , $id )
-    {
-        dd( $id ) ; 
+    { 
+        return response()->json(
+            array('data' => Application::checkTrello( $id ) )
+        ); 
     }
 
+    /**
+     *  Initialisation de tout les URL des l'applications  
+     *  */
+    public function cardBoardTrelloUrl( Request $request , $id )
+    {
+        return response()->json(
+            array('data' => Application::firCardUrls( $id , $request->all() ) )
+        );
+    }
+
+
+    public function deleteApplication( Request $request , \App\Application $app )
+    {
+        return response()->json(
+            array('data' => Application::deleteApplication( $app ) )
+        );
+    }
+    
+    
 }

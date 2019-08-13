@@ -25,11 +25,13 @@ class application extends store{
         if ( err ) 
 			return [ err , null ]
 		this.addItem( data ) ; 
-       	return [ null , true ]
+       	return [ null , data ]
 	}
 
 	async destroyApplication( id ){
-        let [ err , { data } ] = await api( '/api/application/delete/'+id , 'DELETE' ) ;
+        let [ err , { data } ] = await api( '/api/application/'+id , {
+			method : 'DELETE' , 
+		} ) ;
         if ( err ) 
 			return [ err , null ]
        	return [ null , true ]
@@ -67,6 +69,7 @@ class application extends store{
 		if ( err ) 
 			return [ err , null ]
 		this.state.applications = [ ...data ]
+		console.log( this.state.applications )
 		this.trellos()
 		this.infusionsofts()
 		return [ null , this.state.applications ]
@@ -93,9 +96,16 @@ class application extends store{
 		if ( err ) 
 			return [ err , null ]
 		this.addItem( data ) ; 
-		return [ null , this.state.item ]
+		return [ null , data ]
 	}
 
+	async initCard( id ){
+		let [ err , { data } ] = await api( '/api/application/cards/trello/'+id ) ;
+		if ( err ) 
+			return [ err , null ]
+		return [ null , true ]
+	}
+	
 	/*
 	 * Liste de tout les applications trellos 
 	*/
@@ -114,6 +124,14 @@ class application extends store{
 			return this.state.infusionsofts = this.state.applications.filter( e => e.type == 'infusionsoft' )
 		}
 		return [] ; 
+	}
+
+	/*
+	 * Pour les applications trello, lors de l'update, on selectionne 
+	 * tout les url des cards et on l'ajoute dans la base de donner
+	*/
+	trelloCardUrlInit(){
+		
 	}
 } 
 

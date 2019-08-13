@@ -37,5 +37,16 @@ class Form
         return $forms ; 
     }
 
+    /**
+     * Liste de tout les formulaires de cette application 
+     */
+    public function index( $id )
+    {
+        $app = Note::find( $id );
+        $app->load('forms') ; 
+        $qforms = $app->forms() ; 
+        return $qforms->get() ; ; 
+    }
+
 }
 

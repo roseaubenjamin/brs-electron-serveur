@@ -6,6 +6,7 @@ use Illuminate\Auth\AuthManager;
 use App\Team;
 use App\Libs\Facades\Infusionsoft;
 use App\Libs\Facades\Trello;
+use Illuminate\Support\Facades\Storage;
 
 class Application
 {
@@ -31,18 +32,82 @@ class Application
         return $app ; 
     }
 
+    public function deleteApplication( \App\Application $app )
+    {
+        
+        $app->load('teams') ; 
+        $app->load('notes') ; 
+     
+        //supression des teamps de l'application
+        $teams = $app->teams()->get() ; 
+        
+        foreach ( $teams as $team ){
+            $team->delete() ; 
+        }
+        //supression des notes de l'application 
+        $notes = $app->notes()->get() ; 
+        $drive = Storage::disk(env('FILE_DRIVER')) ; 
+        foreach ( $notes as $note ){
+            $note->delete() ; 
+            if( $drive->exists( '/files/'.$app->id.'/'.$note->unique .'.wav' ) ){
+                $drive->delete( '/files/'.$app->id.'/'.$note->unique.'.wav' );
+            }
+        }
+        
+        //récupération des page mobile qui utilise l'application , et update de ces application 
+        if( $app->type == "infusionsoft" ){
+            $where = array( 'infusionsoft' => $app->id ) ; 
+            $mobiles = \App\Mobile::where($where)->get() ;
+            foreach ( $mobiles as $mobile ){
+                if( $mobile->trello ){
+                    $mobile->infusionsoft = '' ; 
+                    $mobile->save() ; 
+                }else{
+                    $mobile->load('teams') ; 
+                    $teams = $mobile->teams()->get() ; 
+                    foreach ( $teams as $team ){
+                        $team->delete() ; 
+                    }
+                    $mobile->delete() ; 
+                }
+            }
+        }else{
+            $where = array( 'trello' => $app->id ) ; 
+            $mobiles = \App\Mobile::where($where)->get() ;
+            foreach ( $mobiles as $mobile ){
+                if( $mobile->infusionsoft ){
+                    $mobile->trello = '' ; 
+                    $mobile->save() ; 
+                }else{
+                    $mobile->load('teams') ; 
+                    $teams = $mobile->teams()->get() ; 
+                    foreach ( $teams as $team ){
+                        $team->delete() ; 
+                    }   
+                    $mobile->delete() ; 
+                }
+            }
+        }
+
+        //supression de l'application en question  
+        return $app->delete() ; 
+
+    }
+
+    
+
     public function index()
     {
         $user = $this->auth->user() ; 
         $user->load('teams') ; 
-        $teams = $user->teams()->get() ; 
+        $teams = $user->teams()->get(); 
         //@tod : trouver la meilleur facons de faire avec l'object collection, 
         //mais la on est vraiment dans l'urgence 
         $apps = array() ; 
         foreach( $teams as $team ){
             $team->load('application') ;
-            $ex = $team->application()->first() ; 
-            if( $ex ){
+            $ex = $team->application()->where('accessToken','!=', null )->first() ; 
+            if( $ex &&  $ex->accessToken ){
                 $app = $ex->toArray() ; 
                 $app['role'] = $team->role ; 
                 $apps[] = $app ; 
@@ -53,6 +118,9 @@ class Application
 
     public function update( $app , array $data )
     {
+        if( \is_numeric( $app ) ){
+            $app = \App\Application::find( $app ) ;
+        }
         $app->update( $data ) ;
         $app->save() ;     
         return $app ; 
@@ -153,12 +221,39 @@ class Application
         return false ;
     }
 
-    public function checkTrello( int $id , array $info = array())
+    public function checkTrello( $url )
     {
-        
-
+        $user = $this->auth->user() ; 
+        $app = \App\Application::where( [ 'url' => 'https://trello.com'. implode('/',explode( '_' , $url )) ] )->first() ;
+        $app->load('teams') ; 
+        $team = $app->teams()->where( 'user_id' , $user->id )->first() ; 
+        if( $team )
+            return $app ;
+        return false ;
     }
 
     
+    public function firCardUrls( $id , array $info = array())
+    {
+        $user = $this->auth->user() ; 
+        $app = \App\Application::where( [ 'id' => $id ] )->first() ;
+        if( $app ){
+            $cards = Trello::cards( $id , $app->accessToken ) ; 
+            //ajoute de l'option 
+            $app->load('options') ; 
+            $options = $app->options() ;
+            $op = $options->where('name',"urls cards ". $id)->first() ; 
+            if( !$op )
+                $options->create([
+                    'name' => "urls cards ". $id  ,
+                    'value' => $cards ,
+                ]);
+            else
+                $op->update(['value' => $cards]) ;
+            return $cards ; 
+        }
+        return false ;
+    }
+
     
 }

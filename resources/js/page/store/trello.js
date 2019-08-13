@@ -81,6 +81,13 @@ class trello extends store{
 		return  [ err , data ]
 	}
 
+	async card( id , native_id ){
+		let [ err , { data } ] = await api( `/api/trello/card/${id}/${native_id}` )  ; 
+		if ( err ) 
+			return [ err , null ]
+		return  [ err , data ]
+	}
+
 } 
 
 export default new trello() ;

@@ -1,9 +1,9 @@
 <template>
 	<a-layout-header class="header">
         <div class="logo" >
-            <router-link :to="{name:'Home'}">
-                <a-avatar  src="/img/logo.png" /> 
-            </router-link>
+            <a href="/">
+            	<a-avatar  src="/img/logo.png" /> 
+            </a>
         </div>
         <a-menu :style="{ lineHeight: '64px' , float : 'right' }" v-model="current"  mode="horizontal">
             <a-menu-item>
