@@ -14,3 +14,4 @@ yarn-error.log
 yarn.lock
 public/js/index.js
 info.md
+sftp-config.json

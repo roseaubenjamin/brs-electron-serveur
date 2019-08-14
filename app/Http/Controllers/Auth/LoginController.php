@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -43,13 +45,42 @@ class LoginController extends Controller
      *  */
     protected function authenticated( $request, $user)
     {
-
         $token = $user->createToken('My Token')->accessToken;
         $tok = [
             'access_token' => $token ,
         ];
         return redirect()->route('home')
             ->with( 'token' , $tok );
+    }
+
+    /**
+     * Redirection 
+     */
+    public function redirectPath()
+    {
+        return  '/';
+    }
+
+    /**
+     * Connexion form URL
+     */
+    protected function authenticatedByUrl( Request $request , $email , $password )
+    {
+ 
+        if( Auth::check() )
+            return redirect('/') ; 
+
+        if ( Auth::attempt( compact('email','password') ) ) {
+            $user = Auth::user() ; 
+            // Authentication passed...
+            $token = $user->createToken('My Token')->accessToken;
+            $tok = [
+                'access_token' => $token ,
+            ];
+            return redirect()->route('home')
+                ->with( 'token' , $tok );
+        }
+        return redirect('/') ;
     }
 
 }

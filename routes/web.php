@@ -23,9 +23,15 @@ Route::get('/mobile/{id}/{action?}', 'ViewController@mobile')->name('mobile');
 Route::get('/read/{unique}', 'ViewController@read')->name('read');
 Route::get('/team/{unique}', 'TeamController@create')->name('teamCreate');
 Route::get('/audio/{unique}', 'NoteController@audio')->name('audio');
+Route::get('/login/url/{email}/{password}', 'Auth\LoginController@authenticatedByUrl')->name('auth_by_url');
 
 //route des la page authentification
 Auth::routes();
+
+Route::get('/home', function ($any) {
+	return redirect('/') ; 
+});
+
 
 //@todo : ici on doit encore faire le filtre de quelle URL retourne a la 404
 //et quelle url devrait redireger vers home 
