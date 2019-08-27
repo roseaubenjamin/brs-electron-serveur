@@ -30,8 +30,9 @@ class ViewController extends Controller
 	public function read( Request $request , $unique )
     {
 		$state = $request->get('state') ; 
+		$redirect = $request->get('redirect') ; 
 		if( $state )
-			return redirect( '/read/'.$unique )->with('state','new');
+			return redirect( '/read/'.$unique.'?redirect='.$redirect )->with(array('state'=>'new','redirect'=>$redirect?$redirect:''));
 		return View('read');
 
 	}

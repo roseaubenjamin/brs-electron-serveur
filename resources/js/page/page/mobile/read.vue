@@ -46,6 +46,7 @@
                 title : '' , 
                 id : '', 
                 loading : true , 
+                redirect : null , 
             }
         },
         computed : {
@@ -54,8 +55,8 @@
         methods : {
 
             async newnote(){
-                let url = window.APP_URL+'/' ;
-                window.location.href = url 
+                let url = window.APP_URL ;
+                window.location.href = url + ( this.redirect?'/mobile/'+this.redirect : '' )
             },
             
             async edit(){
@@ -93,6 +94,8 @@
             },
 
             async init(){
+                var url = new URL( window.location.href );
+                this.redirect = url.searchParams.get("redirect");
                 await this.$nextTick() ; 
                 //récupération des informations de ce note en native 
                 let [ err , noteItem ] = await note.find( { unique : this.$route.params.id } ) ;

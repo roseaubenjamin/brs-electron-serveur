@@ -3,7 +3,7 @@
 @section('content')
     @if (session('state'))
         <script>
-            window.success_create = true ;      
+            window.success_create = true ;        
         </script>
     @endif
     <div id="application" data-base="read">

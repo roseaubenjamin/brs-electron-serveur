@@ -202,7 +202,7 @@ class option extends store{
 
         //ici pas de note crée car il y a une erreur 
 		if ( err || !data || (data && !data.id) ) 
-			return [ err , null ]
+			return [ err ? err : data , null ]
 		return [ null , data ] ;
 
 	}

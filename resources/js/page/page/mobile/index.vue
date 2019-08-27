@@ -230,14 +230,15 @@
 
             async create(){
                 this.loading_btn = true ;
-                let [ err , success ] = await mobile.vocal( this.routeparamsid , this.compte , this.routeparamsid ) ; 
+                let [ err , success ] = await mobile.vocal( this.routeparamsid , this.compte , this.routeparamsid ) ;
+                console.log( '___' , err , success ) ;  
                 if( err )
                     return this.errorCreate( err )
                 //lancer une evenement pour crée les formulaire 
                 let [ errForm , post ] = await form.create( success.id , getForm( this.form ) )
                 //@todo : dans le cas ou l'enregistrement du formulaire a échouer, on peut répéter cette action 
                 if( post ){
-                    return window.location.href = `${window.APP_URL}/read/${this.form.NOTEID}?state=success` ;
+                    return window.location.href = `${window.APP_URL}/read/${this.form.NOTEID}?state=success&redirect=`+this.routeparamsid ;
                 }
                 return this.errorCreate( 'mobile error form' );
             }, 

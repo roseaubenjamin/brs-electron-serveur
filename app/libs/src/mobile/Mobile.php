@@ -223,7 +223,7 @@ class Mobile
                 $note = Infusionsoft::noteCreate( $app->infusionsoft , $ifs->accessToken , compact('contact_id','title','body')) ; 
             } catch (\Exception $e) {}
             
-            if( !$ifs )
+            if( !isset($note) )
                 return 'mobile vocal error note create' ;
             
             $native_id = $note->id ; 
@@ -249,7 +249,7 @@ class Mobile
                 $task = Infusionsoft::taskCreate( $app->infusionsoft , $ifs->accessToken , compact('contact_id','title','description')) ; 
             } catch (\Exception $e) {}
 
-            if( !$ifs )
+            if( !isset($task) )
                 return 'mobile vocal error task create' ;
 
             $native_id = $task->id ; 

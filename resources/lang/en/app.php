@@ -96,5 +96,11 @@ return [
     //page application dashbord 
     'operateur trello update board title' => 'Paramètrage du board a utiliser par trello',
 
+    //erreur dans la création de notes 
+    'mobile vocal error ifs' => 'Application infusionsoft introuvable',
+    'mobile vocal error note create' => 'Erreur création de note infusionsoft',
+    'mobile vocal error task create' => 'Erreur création de tache infusionsoft',
+    'mobile vocal create unknow' => 'une erreur est survenu,veilleur réssayer SVP ',
+
 ]; 
 
