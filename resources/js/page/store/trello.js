@@ -88,6 +88,15 @@ class trello extends store{
 		return  [ err , data ]
 	}
 
+	async delcard( mobile , native ){
+		let [ err , { data } ] = await api( `/api/trello/card/${mobile}/${native}`, {
+			method : 'DELETE' ,
+		}) ; 
+		if ( err ) 
+			return [ err , null ]
+		return  [ err , data ]
+	}
+
 } 
 
 export default new trello() ;

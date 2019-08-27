@@ -49,9 +49,7 @@
                 redirect : null , 
             }
         },
-        computed : {
-
-        },
+        computed : {},
         methods : {
 
             async newnote(){
@@ -114,9 +112,7 @@
         mounted(){
             this.init() ; 
         },
-        created(){
-
-        }
+        created(){}
     }
 
 </script>

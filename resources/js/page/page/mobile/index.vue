@@ -10,7 +10,10 @@
         </div>
         <a-row type="flex" justify="center">
             <a-col :xs="24" style="max-width: 500px;" >
-                <h1>{{$lang('mobile index title')}}</h1>
+                <h1 v-if="$route.name=='Duplicate'">{{$lang('mobile index duplicate title')}}</h1>
+                <h1 v-if="$route.name=='Copy'">{{$lang('mobile index copy title')}}</h1>
+                <h1 v-if="$route.name=='Update'">{{$lang('mobile index title')}}</h1>
+                <h1 v-if="$route.name=='Home'">{{$lang('mobile index title')}}</h1>
                 <p>{{$lang('mobile index description')}}</p>
                 <a-divider dashed />
                 <a-form :layout="'vertical'">
@@ -80,6 +83,7 @@
     import application from '../../store/application' ; 
     import note from '../../store/note' ; 
     import form from '../../store/form' ; 
+    import trello from '../../store/trello' ; 
     import makeid from '../../libs/makeid' ; 
     import wait from '../../libs/wait' ; 
     import formateDescription from '../../libs/formateDescription' ; 
@@ -204,10 +208,9 @@
             async validate(){
                 if ( this.update && this.update.id ) {
                     //ici on fait l'update
-                    console.log('Update error 001') ; 
                     await this.updateSubmit() ; 
                 }else if( this.duplicate && this.duplicate.id ){
-                    console.log('duplicate error 001') ; 
+                    await this.convert() ; 
                 }else{
                     await this.create() ; 
                 }
@@ -216,21 +219,38 @@
             async updateSubmit(){
                 
                 this.loading_btn = true ;
-
                 let [ err , success ] = await mobile.update( this.update.id , this.compte ) ; 
-                
                 if( err )
                     return this.errorCreate( err )
-
                 if( success ){
                     return window.location.href = `${window.APP_URL}/read/${success.unique}?state=success` ;
                 }
 
             },
 
+            async convert(){
+
+                this.loading_btn = true ;
+                let [ err , success ] = await mobile.vocal( this.routeparamsid , this.compte , this.duplicate.id ) ;
+                 console.log( '___' , err , success ) ;  
+                if( err )
+                    return this.errorCreate( err )
+                //lancer une evenement pour crée les formulaire 
+                if( this.$route.name == 'Copy' )
+                    await trello.delcard( this.duplicate.application_id , this.duplicate.native_id ) ; 
+                //suppression de note si duplicate 
+                let [ errForm , post ] = await form.create( success.id , getForm( this.form ) )
+                //@todo : dans le cas ou l'enregistrement du formulaire a échouer, on peut répéter cette action 
+                if( post ){
+                    return window.location.href = `${window.APP_URL}/read/${this.form.NOTEID}?state=success&redirect=`+this.routeparamsid ;
+                }
+
+                return this.errorCreate( 'mobile error form' );
+            },
+
             async create(){
                 this.loading_btn = true ;
-                let [ err , success ] = await mobile.vocal( this.routeparamsid , this.compte , this.routeparamsid ) ;
+                let [ err , success ] = await mobile.vocal( this.routeparamsid , this.compte , false ) ;
                 console.log( '___' , err , success ) ;  
                 if( err )
                     return this.errorCreate( err )
@@ -244,6 +264,7 @@
             }, 
 
             async initDupCop(){
+                this.form.NOTEID = makeid(12) ;  
                 //récupération des possible mobile pour cette notes
                 let [ err , natibem ] = await mobile.findMobileListeFromUnique( this.$route.params.unique ) ;
                 if( err ){
@@ -293,7 +314,6 @@
             } ,
 
             async initUpdate( isSingle ){
-
                 let unique = this.$route.params.unique ; 
                 if( isSingle ){
                     unique = this.$route.params.id ; 
@@ -315,7 +335,6 @@
                 this.update = n ; 
                 
                 this.emit('vocallisten', `${window.APP_URL}/audio/${unique}` )
-
             },
 
             async init(){

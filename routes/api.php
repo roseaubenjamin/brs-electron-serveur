@@ -68,6 +68,7 @@ Route::group([ 'middleware' => 'auth:api'], function() {
     Route::get('/trello/membres/{app}', 'TrelloController@membres')->name('trello_membres');
     Route::get('/trello/labels/{app}', 'TrelloController@labels')->name('trello_labels');
     Route::get('/trello/card/{app}/{card}', 'TrelloController@card')->name('trello_card');
+    Route::delete('/trello/card/{app}/{card}', 'TrelloController@deletecard')->name('trello_card_delete');
 
     Route::get('/infusionsoft/check/membres', 'InfusionsoftController@checkMembre')->name('infusionsoft_checkMembre');
     Route::get('/infusionsoft/membres/{app}', 'InfusionsoftController@membres')->name('infusionsoft_membres');

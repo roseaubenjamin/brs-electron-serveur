@@ -77,4 +77,17 @@ class TrelloController extends Controller
         );
     }
     
+    public function deletecard( Request $request , $app , $card )
+    {
+        $trello = \App\Application::find( $app ) ;
+        if( !$trello ){
+            return response()->json(
+                array('data' => [] )
+            );    
+        }
+        return response()->json(
+            array('data' => Trello::removeCard( $trello->id , $trello->accessToken , $card ) )
+        );
+    }
+    
 }

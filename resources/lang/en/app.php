@@ -76,6 +76,8 @@ return [
     //langue de la page mobile 
     'mobile menu dashboard' => 'Menu principale',
     'mobile index title' => 'Ajouter une note',
+    'mobile index duplicate title' => 'Duplication de note vers IFS',
+    'mobile index copy title' => 'Conversion de note vers IFS',
     'mobile index description' => 'Veuillez remplir étape par étape le formulaire ci-dessous et cliquer sur valider pour envoyer votre message vocal',
     'mobile index assigned ifs' => 'Assigner A (Pour), ou note ',
     'mobile index assigned trello' => 'Assigner A (Pour)',
@@ -83,7 +85,11 @@ return [
     'mobile index contact ifs' => 'Contact ID',
     'mobile index priority trello' => 'Prioriter',
     'mobile index priority ifs' => 'Prioriter',
+    'mobile error mobile liste' => 'Erreur récupération page mobile',
+    'mobile error duplicate note existe' => 'Note a dupliquer pas trouver',
     'read success new note' => 'Félicitation vous avez crée avec success un note',
+
+
     //erreur 
     'mobile error contact id' => 'Il faut ajouter un contact infusionsoft',
     'mobile error note' => 'Il faut enregistrer un note vocal',

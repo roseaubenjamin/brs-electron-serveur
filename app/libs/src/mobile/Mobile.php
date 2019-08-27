@@ -298,9 +298,16 @@ class Mobile
         
         $mobile_id = $app->id ;
         $unique = $data['unique'] ; 
-        $dataNote = compact('unique','native_id','attache','application_id','mobile_id') ; 
+        $note = isset($data['duplicate']) && $data['duplicate'] ? (int) $data['duplicate'] : false ; 
+        $dataNote = compact('unique','native_id','attache','application_id','mobile_id','note') ; 
         
-        if( $newvocal = Note::create( $dataNote , $data['file'] ) ){
+        if( $note ){
+            $newvocal = Note::duplicateNote( $dataNote , $app->infusionsoft ) ; 
+        }else {
+            $newvocal = Note::create( $dataNote , $data['file'] ) ; 
+        }
+
+        if( isset( $newvocal ) && $newvocal ){
             return $newvocal ; 
         }
         return 'mobile vocal create unknow' ;

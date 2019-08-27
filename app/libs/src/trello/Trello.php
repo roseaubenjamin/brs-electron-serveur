@@ -177,13 +177,10 @@ class Trello
         return $trello->getCard( $card ); 
     }
     
-    public function addCard( int $id , string $accessToken , $card )
+    public function removeCard( $id , $accessToken , $card )
     {
-        $board = Option::find("application_${id}_native") ; 
-        if( !$board->value )
-            return [] ;             
-        $trello = $this->getTrello( $id , $accessToken ) ; 
-        return $trello->addCard( $card ); 
+        $trello = $this->getTrello( $id ,  $accessToken ) ; 
+        return $trello->deleteCard( $card ) ; 
     }
     
 

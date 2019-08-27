@@ -176,13 +176,15 @@ class option extends store{
 		//si me note n'existe pas alors on affiche une erreur 
 	}
 
-	async vocal( mobile , compte , unique ){ 
-		if ( !this.form.note ) 
+	async vocal( mobile , compte , duplicate ){ 
+
+		if ( !this.form.note && !duplicate ) 
             return [ 'mobile error note' , null ] ; 
 		
 		if( compte == 'infusionsoft' && !this.form.contactId ){
             return [ 'mobile error contact id' , null ] ; 
-		}
+		} 
+
 		let formData = new FormData();
 		formData.append('compte', compte );
 		formData.append('assigned', this.form.assigned );
@@ -192,6 +194,7 @@ class option extends store{
 		formData.append('contact_id', this.form.contactId );
 		formData.append('file', this.form.note );
 		formData.append('title', formateTitle( this.form ) );
+		formData.append('duplicate', duplicate );
 		formData.append('description', formateDescription( getForm( this.form ) ) );
 
         //création de note de tache ou de card en native

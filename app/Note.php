@@ -18,7 +18,7 @@ class Note extends Model
 
     public function application()
     {
-        return $this->belongsTo(Note::class) ; 
+        return $this->belongsTo(Application::class) ; 
     }
     
 }

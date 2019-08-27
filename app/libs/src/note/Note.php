@@ -42,6 +42,27 @@ class Note
 
     }
 
+    /**
+     * Duplication de notes 
+     *  */
+    public function duplicateNote( $data , $ifs )
+    {
+        $note = \App\Note::where('id',$data['note'])->first() ; 
+        $note->load('application') ;
+        $application = $note->application()->first()  ;  
+        //copie du nouveaux fichier 
+        $drive = Storage::disk(env('FILE_DRIVER')) ; 
+        if( $drive->exists( '/files/'.$application->id.'/'.$note->unique.'.wav' ) ){
+            $drive->copy( '/files/'.$application->id.'/'.$note->unique.'.wav' , '/files/'.$ifs.'/'.$data['unique'].'.wav' );
+            $path = $drive->url('/files/'.$application->id.'/'.$data['unique'].'.wav');
+            $data['path'] = $path ; 
+        }
+        return \App\Note::create( $data ) ; 
+    }
+
+    /**
+     * conversion de notes  
+     *  */
     public function createConvert( $data )
     {
         $note = \App\Note::where('id',$data['note'])->first() ; 
