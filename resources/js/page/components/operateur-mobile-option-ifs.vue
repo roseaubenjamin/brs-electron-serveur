@@ -95,7 +95,7 @@
                 let prefrmedTeam = [ ...this.infusionsoft.teams , { id : 'note' , preferred_name : this.$lang('mobile option trello assinged note') } ]
                 let $teams = prefrmedTeam.filter( (a) => 
                     ! this.mobile.assigned.infusionsoft.find( e => e.value.user_id == a.id ) 
-                    && parseInt( this.native_id ) != parseInt( a.id ) 
+                    //&& parseInt( this.native_id ) != parseInt( a.id ) 
                 )
                 return $teams ; 
             }

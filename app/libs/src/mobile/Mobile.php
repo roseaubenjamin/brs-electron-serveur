@@ -204,11 +204,11 @@ class Mobile
             //récupération de l'option assigned 
             $assigned = \App\Options::where( 'id', $assigned )->first() ;
         }
-         
+          
         if( 
             $data['compte'] == "infusionsoft" &&
-            $assigned && isset( $assigned->value['user_id'] ) &&
-            $assigned->value['user_id'] == "note" &&
+            ($assigned && isset( $assigned->value['user_id'] ) &&
+            $assigned->value['user_id'] == "note" || ! $assigned ) &&
             $app->infusionsoft 
         ){
             //récupératon de l'application infusionsot 
@@ -299,6 +299,7 @@ class Mobile
         $mobile_id = $app->id ;
         $unique = $data['unique'] ; 
         $dataNote = compact('unique','native_id','attache','application_id','mobile_id') ; 
+        
         if( $newvocal = Note::create( $dataNote , $data['file'] ) ){
             return $newvocal ; 
         }

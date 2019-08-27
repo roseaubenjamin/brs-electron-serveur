@@ -36,7 +36,9 @@ class Note
         $new = $drive->move('/files/'.$app->id.'/'.basename($filei), '/files/'.$app->id.'/'.$data['unique'].'.wav' );
         $path = $drive->url('/files/'.$app->id.'/'.$data['unique'].'.wav');
         $data['path'] = $path ;
-        return \App\Note::create( $data ) ; 
+        unset($data['file']) ;
+        $note = \App\Note::create( $data ) ;
+        return $note ; 
 
     }
 

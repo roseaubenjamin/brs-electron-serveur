@@ -20,9 +20,9 @@ class option extends store{
 		this.form = {
 
             categorie : 'comptabilite' , 
-            comptabilite : 'Envoyer document' ,
+            comptabilite : '' ,
             comptabilite_autre : '' ,
-            sav : 'Installation logiciel' , 
+            sav : '' , 
             sav_autre : '' , 
             commercial : '' , 
             commercial_autre : '' , 
@@ -176,15 +176,13 @@ class option extends store{
 		//si me note n'existe pas alors on affiche une erreur 
 	}
 
-	async vocal( mobile , compte , unique ){
-
+	async vocal( mobile , compte , unique ){ 
 		if ( !this.form.note ) 
             return [ 'mobile error note' , null ] ; 
 		
 		if( compte == 'infusionsoft' && !this.form.contactId ){
             return [ 'mobile error contact id' , null ] ; 
 		}
-		
 		let formData = new FormData();
 		formData.append('compte', compte );
 		formData.append('assigned', this.form.assigned );
@@ -208,6 +206,30 @@ class option extends store{
 		return [ null , data ] ;
 
 	}
+
+	async update( mobile , compte ){
+
+		console.log( mobile , compte )
+		
+		if ( !this.form.note ) 
+            return [ 'mobile error note' , null ] ; 
+		
+		let formData = new FormData();
+		formData.append('file', this.form.note );
+
+        //création de note de tache ou de card en native
+        let [ err , { data } ] = await api( '/api/note/'+mobile , {
+			method : 'POST' , 
+			body : formData
+		} , false ) ;
+
+        //ici pas de note crée car il y a une erreur 
+		if ( err || !data || (data && !data.id) ) 
+			return [ err , null ]
+		return [ null , data ] ;
+
+	}
+
 } 
 
 export default new option() ;

@@ -195,7 +195,7 @@
                 let preformate = [ ...this.trello.teams , { id : 'default' , name : this.$lang('mobile option trello assinged default')} ] ; 
                 let $teams = preformate.filter( (a) => 
                     ! this.mobile.assigned.trello.find( e => e.value.idMembers == a.id ) 
-                    && this.native_id !== a.id 
+                    //&& this.native_id !== a.id 
                 )
                 return $teams ; 
             },

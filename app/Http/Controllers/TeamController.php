@@ -24,7 +24,7 @@ class TeamController extends Controller
       */
     public function create( Request $request , $unique )
     {
-        if( \App\Application::where( 'id' , $unique )->first() )
+        if( !\App\Application::where( 'unique' , $unique )->first() )
             return View('home');
         if( Auth::check() ){
             if( $add = Team::create( $unique ) ){ 

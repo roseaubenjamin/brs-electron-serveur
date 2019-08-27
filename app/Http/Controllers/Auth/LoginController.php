@@ -39,6 +39,13 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     } 
+
+    public function showLoginForm()
+    {
+        //on veux effacher le token de l'utilisateur dans l'extension chrome 
+        $tokenclear = session('tokenclear') ;
+        return view('auth.login' , $tokenclear?['tokenclear' => array( 'deleteApiKey' => true ) ]:[] );
+    }
     
     /**
      * Création du token d'authentification
@@ -81,6 +88,12 @@ class LoginController extends Controller
                 ->with( 'token' , $tok );
         }
         return redirect('/') ;
+    }
+
+    protected function loggedOut(Request $request)
+    {
+        return redirect()->route('login')
+                ->with( 'tokenclear' , true );
     }
 
 }

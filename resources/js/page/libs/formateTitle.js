@@ -1,6 +1,21 @@
 import placedata from './placedata' ; 
 
 export default function formateTitle ( form ){
-	let text = '' ; 
-    return placedata('categorieArray' , form.categorie)+" "+form.produit+" -"+( form.categorie !== 'autre' ? ( form[ form.categorie]=='_____'?  form[ form.categorie+"_autre"] :  form[ form.categorie]) : form.autre )
+    let def = placedata('categorieArray' , form.categorie) ; 
+	let product = form.produit ; 
+	let info = '' ; 
+	let temps = '' ; 
+	if( form.categorie !== 'autre' ){
+		if( form[ form.categorie] == '_____' ){
+			temps = form[ form.categorie+"_autre"]
+		}else{
+			temps = form[ form.categorie]
+		}
+	}else{
+		temps = form.autre 
+	}
+	if( temps ) info = ' - ' + temps ;
+    let text = def +' '+ product +' '+ info ; 
+    return text ; 
+
 }

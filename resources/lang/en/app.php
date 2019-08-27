@@ -84,5 +84,17 @@ return [
     'mobile index priority trello' => 'Prioriter',
     'mobile index priority ifs' => 'Prioriter',
     'read success new note' => 'Félicitation vous avez crée avec success un note',
+    //erreur 
+    'mobile error contact id' => 'Il faut ajouter un contact infusionsoft',
+    'mobile error note' => 'Il faut enregistrer un note vocal',
+    'mobile error note' => 'Il faut enregistrer un note vocal',
+    'mobile vocal error ifs' => 'Erreur récupération infusionsoft',
+    'mobile vocal error note create' => 'Erreur création de note',
+    'mobile vocal error task create' => 'Erreur création de tache',
+    'mobile vocal create unknow' => 'Une erreur est survenu, vieille réveille SVP',
+
+    //page application dashbord 
+    'operateur trello update board title' => 'Paramètrage du board a utiliser par trello',
 
 ]; 
+

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -70,4 +71,18 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
+
+    /**
+     * Chargement de redirection apres avoire fait une scription 
+     */
+    protected function registered(Request $request, $user)
+    {
+        $token = $user->createToken('My Token')->accessToken;
+        $tok = [
+            'access_token' => $token ,
+        ];
+        return redirect()->route('home')
+            ->with( 'token' , $tok );
+    }
+
 }

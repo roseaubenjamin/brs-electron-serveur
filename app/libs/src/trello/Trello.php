@@ -108,7 +108,7 @@ class Trello
             ->map(function ($item, $key) {
                 $id = $item->id ; 
                 $name = $item->name ;
-                return compact('name' , 'url' , 'id' , 'name');
+                return compact( 'id' , 'name');
             });
         return $collection ; 
     }

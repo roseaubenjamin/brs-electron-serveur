@@ -2,6 +2,13 @@
 
 @section('content')
 
+
+@if (isset($tokenclear))
+        <script>
+        chrome.runtime.sendMessage( "{{ env( 'CHROME_KEY' ) }}" , JSON.parse("{{ json_encode($tokenclear) }}".replace(/&quot;/g,'"')) );
+        </script>
+@endif
+
 <div class="wrapper fadeInDown">
     <div id="formContent">
         <!-- Login Form --> 

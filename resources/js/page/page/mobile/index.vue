@@ -67,7 +67,7 @@
 
                     <mobile-form  v-if="!update" ></mobile-form>
                     
-                    <a-button :disabled="error" type="primary" icon="table" @click="create" block :loading="loading_btn" >Valider</a-button>
+                    <a-button :disabled="error" type="primary" icon="table" @click="validate" block :loading="loading_btn" >Valider</a-button>
 
                 </a-form>
             </a-col>
@@ -200,6 +200,33 @@
             changeDate(){ 
                 this.form.prioriter = null ; 
             }, 
+
+            async validate(){
+                if ( this.update && this.update.id ) {
+                    //ici on fait l'update
+                    console.log('Update error 001') ; 
+                    await this.updateSubmit() ; 
+                }else if( this.duplicate && this.duplicate.id ){
+                    console.log('duplicate error 001') ; 
+                }else{
+                    await this.create() ; 
+                }
+            },
+
+            async updateSubmit(){
+                
+                this.loading_btn = true ;
+
+                let [ err , success ] = await mobile.update( this.update.id , this.compte ) ; 
+                
+                if( err )
+                    return this.errorCreate( err )
+
+                if( success ){
+                    return window.location.href = `${window.APP_URL}/read/${success.unique}?state=success` ;
+                }
+
+            },
 
             async create(){
                 this.loading_btn = true ;
